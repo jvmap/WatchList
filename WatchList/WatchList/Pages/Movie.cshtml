@@ -1,0 +1,34 @@
+﻿@page
+@model WatchList.Pages.MovieModel
+@{
+}
+<h1>@ViewData["Title"]</h1>
+<p>Search by movie title:</p>
+<form>
+    <input asp-for="Query" style="width:300px;" />
+    <button action="submit">Submit</button>
+</form>
+<br />
+@if (string.IsNullOrEmpty(Model.Query))
+{
+
+}
+else if (Model.MovieData == null)
+{
+    <p>We haven't heard of this movie :-(</p>
+}
+else
+{
+    <p>This is what we found:</p>
+    <table>
+        <tbody>
+            @foreach ((string key, string value) in Model.MovieData)
+            {
+                <tr>
+                    <td style="min-width:200px;">@key</td>
+                    <td>@value</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
