@@ -19,11 +19,16 @@ else if (Model.MovieData == null)
 }
 else
 {
-    <p>This is what we found:</p>
+    @if (Model.MovieData.TryGetValue("Poster", out string poster))
+    {
+        <img src="@poster" />
+    }
+    <p></p>
     <table>
         <tbody>
             @foreach ((string key, string value) in Model.MovieData)
             {
+                @if (key == "Poster") continue;
                 <tr>
                     <td style="min-width:200px;">@key</td>
                     <td>@value</td>

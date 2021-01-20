@@ -29,6 +29,11 @@ namespace WatchList.Data
             }
         }
 
+        public bool TryGetValue(string property, out string value)
+        {
+            return _data.TryGetValue(property, out value);
+        }
+
         public IEnumerator<(string, string)> GetEnumerator() => PrivateGetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => PrivateGetEnumerator();
