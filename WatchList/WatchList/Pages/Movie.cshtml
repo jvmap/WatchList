@@ -24,7 +24,26 @@ else
         <img src="@poster" />
     }
     <p></p>
-    @await Component.InvokeAsync("UserMovieData", Model.MovieData.MovieId);
+    <table>
+        <tbody>
+            <tr>
+                <td style="min-width:200px;">Watched</td>
+                <td id="fld_watched"></td>
+            </tr>
+            <tr>
+                <td style="min-width:200px;"></td>
+                <td><button id="btn_watched">I watched this movie!</button></td>
+            </tr>
+            <tr>
+                <td style="min-width:200px;">Rating</td>
+                <td id="fld_rating"></td>
+            </tr>
+            <tr>
+                <td style="min-width:200px;">WantToWatch</td>
+                <td id="fld_wantToWatch"></td>
+            </tr>
+        </tbody>
+    </table>
     <table>
         <tbody>
             @foreach ((string key, string value) in Model.MovieData)
@@ -37,4 +56,18 @@ else
             }
         </tbody>
     </table>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', function () {
+                $.ajax({
+                    url: "/UserMovieData/@Model.MovieData.MovieId",
+                    type: "GET",
+                    success: function (data) {
+                        $("#fld_watched").text(data.watched);
+                        $("#fld_rating").text(data.rating ?? "Not rated");
+                        $("#fld_wantToWatch").text(false);
+                    }
+                });
+            });
+    </script>
 }
