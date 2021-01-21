@@ -7,10 +7,13 @@ using WatchList.Events;
 
 namespace WatchList.Data
 {
+    /// <summary>
+    /// This class is threadsafe.
+    /// </summary>
     public class InMemoryEventStore : IEventStore
     {
-        private static readonly List<EventInfo> _events = new List<EventInfo>();
-        private static readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
+        private readonly List<EventInfo> _events = new List<EventInfo>();
+        private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
         
         public async Task AddEventAsync(IEvent evt)
         {

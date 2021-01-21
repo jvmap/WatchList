@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace WatchList.Data
 {
+    /// <summary>
+    /// This class is threadsafe.
+    /// </summary>
     public class InMemoryMovieRepository : IMovieRepository
     {
         private static readonly IReadOnlyDictionary<string, MovieData> _movies;

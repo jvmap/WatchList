@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using WatchList.Config;
 using WatchList.Data;
 using WatchList.Events;
+using WatchList.Services;
 
 namespace WatchList
 {
@@ -29,10 +30,11 @@ namespace WatchList
             services.AddRazorPages();
             //services.AddScoped<IMovieRepository, InMemoryMovieRepository>();
             services.AddScoped<IMovieRepository, OmdbMovieRepository>();
-            services.AddScoped<IUserMovieRepository, InMemoryUserMovieRepository>();
-            services.AddScoped<IEventStore, InMemoryEventStore>();
-            services.AddScoped<IEventBus, InMemoryEventBus>();
+            services.AddSingleton<IUserMovieRepository, InMemoryUserMovieRepository>();
+            services.AddSingleton<IEventStore, InMemoryEventStore>();
+            services.AddSingleton<IEventBus, InMemoryEventBus>();
             services.Configure<OmdbApiConfig>(this.Configuration.GetSection("OmdbApi"));
+            services.AddHostedService<EventRoutingService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

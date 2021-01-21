@@ -8,7 +8,7 @@ namespace WatchList.Events
 {
     public class InMemoryEventBus : IEventBus
     {
-        private static readonly List<IEventConsumer> _consumers = new List<IEventConsumer>();
+        private static readonly HashSet<IEventConsumer> _consumers = new HashSet<IEventConsumer>();
         private static readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
 
         public async Task PublishEventAsync(IEvent evt)
@@ -16,7 +16,10 @@ namespace WatchList.Events
             await _lock.WaitAsync();
             try
             {
-                _consumers.ForEach(c => c.OnNext(evt));
+                foreach (IEventConsumer consumer in _consumers)
+                {
+                    consumer.OnNext(evt);
+                }
             }
             finally
             {
