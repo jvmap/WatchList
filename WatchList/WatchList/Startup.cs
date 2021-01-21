@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WatchList.Config;
 using WatchList.Data;
+using WatchList.Events;
 
 namespace WatchList
 {
@@ -29,6 +30,8 @@ namespace WatchList
             //services.AddScoped<IMovieRepository, InMemoryMovieRepository>();
             services.AddScoped<IMovieRepository, OmdbMovieRepository>();
             services.AddScoped<IUserMovieRepository, InMemoryUserMovieRepository>();
+            services.AddScoped<IEventStore, InMemoryEventStore>();
+            services.AddScoped<IEventBus, InMemoryEventBus>();
             services.Configure<OmdbApiConfig>(this.Configuration.GetSection("OmdbApi"));
         }
 

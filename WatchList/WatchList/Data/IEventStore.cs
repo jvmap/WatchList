@@ -8,6 +8,6 @@ namespace WatchList.Data
 {
     public interface IEventStore
     {
-        void AddEvent(IEvent evt);
+        Task AddEventAsync(IEvent evt);
     }
 }

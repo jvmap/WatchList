@@ -5,10 +5,8 @@ using System.Threading.Tasks;
 
 namespace WatchList.Events
 {
-    public interface IEventBus
+    public interface IEventConsumer
     {
-        Task PublishEventAsync(IEvent evt);
-
-        Task SubscribeAsync(IEventConsumer consumer);
+        void OnNext(IEvent evt);
     }
 }

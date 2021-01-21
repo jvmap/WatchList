@@ -19,11 +19,11 @@ namespace WatchList.CommandHandlers
             this._bus = bus;
         }
         
-        public void HandleCommand(WatchedMovieCommand cmd)
+        public async Task HandleCommandAsync(WatchedMovieCommand cmd)
         {
             var evt = new WatchedMovieEvent(cmd.MovieId);
-            _store.AddEvent(evt);
-            _bus.PublishEvent(evt);
+            await _store.AddEventAsync(evt);
+            await _bus.PublishEventAsync(evt);
         }
     }
 }

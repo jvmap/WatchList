@@ -58,16 +58,27 @@ else
     </table>
 
     <script>
-        window.addEventListener('DOMContentLoaded', function () {
-                $.ajax({
-                    url: "/UserMovieData/@Model.MovieData.MovieId",
-                    type: "GET",
-                    success: function (data) {
-                        $("#fld_watched").text(data.watched);
-                        $("#fld_rating").text(data.rating ?? "Not rated");
-                        $("#fld_wantToWatch").text(false);
-                    }
-                });
+        function refreshUserMovieData(data) {
+            $("#fld_watched").text(data.watched);
+            $("#fld_rating").text(data.rating ?? "Not rated");
+            $("#fld_wantToWatch").text(data.wantToWatch);
+        }
+
+        window.addEventListener("DOMContentLoaded", function () {
+            $.ajax({
+                url: "/UserMovieData/@Model.MovieData.MovieId",
+                type: "GET",
+                success: refreshUserMovieData
             });
+            document
+                .getElementById("btn_watched")
+                .addEventListener("click", function () {
+                    $.ajax({
+                        url: "/UserMovieData/@Model.MovieData.MovieId/watched",
+                        type: "POST",
+                        success: refreshUserMovieData
+                    })
+                });
+        });
     </script>
 }
