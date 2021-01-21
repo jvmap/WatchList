@@ -39,6 +39,16 @@ else
                 <td id="fld_rating"></td>
             </tr>
             <tr>
+                <td style="min-width:200px;"></td>
+                <td>
+                    <button id="btn_rating1">*</button>
+                    <button id="btn_rating2">**</button>
+                    <button id="btn_rating3">***</button>
+                    <button id="btn_rating4">****</button>
+                    <button id="btn_rating5">*****</button>
+                </td>
+            </tr>
+            <tr>
                 <td style="min-width:200px;">WantToWatch</td>
                 <td id="fld_wantToWatch"></td>
             </tr>
@@ -74,6 +84,17 @@ else
             }
         }
 
+        function getRatingCallback(rating) {
+            return () => {
+                $.ajax({
+                    url: "/UserMovieData/@Model.MovieData.MovieId/rate",
+                    data: { "rating": rating },
+                    type: "POST",
+                    success: refreshUserMovieData
+                })
+            }
+        }
+
         window.addEventListener("DOMContentLoaded", function () {
             $.ajax({
                 url: "/UserMovieData/@Model.MovieData.MovieId",
@@ -98,6 +119,11 @@ else
                         success: refreshUserMovieData
                     })
                 });
+            for (var rating = 1; rating <= 5; rating++) {
+                document
+                    .getElementById("btn_rating" + rating)
+                    .addEventListener("click", getRatingCallback(rating));
+            }
         });
     </script>
 }

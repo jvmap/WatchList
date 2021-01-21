@@ -14,7 +14,7 @@ namespace WatchList.Data
         public bool Watched { get; set; }
 
         /// <summary>
-        /// Movie Rating 1-10 or null.
+        /// Movie Rating 1-5 or null.
         /// </summary>
         public int? Rating { get; set; }
 
