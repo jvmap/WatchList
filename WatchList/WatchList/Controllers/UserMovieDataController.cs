@@ -44,10 +44,19 @@ namespace WatchList.Controllers
             return await PrivateGetAsync(movieId);
         }
 
+        [HttpPost("{movieId}/wantToWatch")]
+        public async Task<UserMovieData> PostWantToWatchAsync(string movieId)
+        {
+            var handler = new WantToWatchMovieCommandHandler(_eventStore, _eventBus);
+            await handler.HandleCommandAsync(new WantToWatchMovieCommand { MovieId = movieId });
+            return await PrivateGetAsync(movieId);
+        }
+
         private async Task<UserMovieData> PrivateGetAsync(string movieId)
         {
-            return await _repository.GetUserMovieDataByIdAsync(movieId)
+            UserMovieData result = await _repository.GetUserMovieDataByIdAsync(movieId)
                 ?? new UserMovieData();
+            return result;
         }
     }
 }

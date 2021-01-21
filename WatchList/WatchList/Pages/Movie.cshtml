@@ -42,6 +42,10 @@ else
                 <td style="min-width:200px;">WantToWatch</td>
                 <td id="fld_wantToWatch"></td>
             </tr>
+            <tr>
+                <td style="min-width:200px;"></td>
+                <td><button id="btn_wantToWatch">I want to watch this movie!</button></td>
+            </tr>
         </tbody>
     </table>
     <table>
@@ -60,8 +64,14 @@ else
     <script>
         function refreshUserMovieData(data) {
             $("#fld_watched").text(data.watched);
+            if (data.watched) {
+                $("#btn_watched").remove();
+            }
             $("#fld_rating").text(data.rating ?? "Not rated");
             $("#fld_wantToWatch").text(data.wantToWatch);
+            if (data.wantToWatch) {
+                $("#btn_wantToWatch").remove();
+            }
         }
 
         window.addEventListener("DOMContentLoaded", function () {
@@ -75,6 +85,15 @@ else
                 .addEventListener("click", function () {
                     $.ajax({
                         url: "/UserMovieData/@Model.MovieData.MovieId/watched",
+                        type: "POST",
+                        success: refreshUserMovieData
+                    })
+                });
+            document
+                .getElementById("btn_wantToWatch")
+                .addEventListener("click", function () {
+                    $.ajax({
+                        url: "/UserMovieData/@Model.MovieData.MovieId/wantToWatch",
                         type: "POST",
                         success: refreshUserMovieData
                     })

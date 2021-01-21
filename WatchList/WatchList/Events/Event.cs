@@ -7,7 +7,7 @@ namespace WatchList.Events
 {
     public abstract class Event: IEvent
     {
-        static string _name;
+        string _name;
         
         public string Name
         {
@@ -18,8 +18,6 @@ namespace WatchList.Events
                     string name = this.GetType().Name;
                     if (name.EndsWith("Event"))
                         name = name[0..^5];
-
-                    // multi-threaded initialization is safe here, because the result is deterministic.
                     _name = name;
                 }
                 return _name;

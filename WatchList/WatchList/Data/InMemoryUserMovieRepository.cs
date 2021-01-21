@@ -9,11 +9,13 @@ namespace WatchList.Data
     public class InMemoryUserMovieRepository : IUserMovieRepository
     {
         private readonly HashSet<string> _watchedMovies = new HashSet<string>();
-        
+        private readonly HashSet<string> _wantToWatchMovies = new HashSet<string>();
+
         public Task<UserMovieData> GetUserMovieDataByIdAsync(string movieId)
         {
             var result = new UserMovieData();
             result.Watched = _watchedMovies.Contains(movieId);
+            result.WantToWatch = _wantToWatchMovies.Contains(movieId);
             return Task.FromResult(result);
         }
 
@@ -23,6 +25,9 @@ namespace WatchList.Data
             {
                 case "WatchedMovie":
                     _watchedMovies.Add(evt.AggregateId);
+                    break;
+                case "WantToWatchMovie":
+                    _wantToWatchMovies.Add(evt.AggregateId);
                     break;
                 default:
                     break;
