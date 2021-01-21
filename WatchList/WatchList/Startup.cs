@@ -28,6 +28,7 @@ namespace WatchList
             services.AddRazorPages();
             //services.AddScoped<IMovieRepository, InMemoryMovieRepository>();
             services.AddScoped<IMovieRepository, OmdbMovieRepository>();
+            services.AddScoped<IUserMovieRepository, InMemoryUserMovieRepository>();
             services.Configure<OmdbApiConfig>(this.Configuration.GetSection("OmdbApi"));
         }
 

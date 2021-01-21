@@ -9,7 +9,7 @@ namespace WatchList.Data
     {
         public Task<UserMovieData> GetUserMovieDataByIdAsync(string movieId)
         {
-            throw new NotImplementedException();
+            return Task.FromResult<UserMovieData>(null); // TODO
         }
     }
 }

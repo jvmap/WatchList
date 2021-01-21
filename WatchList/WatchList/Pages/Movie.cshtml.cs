@@ -15,8 +15,6 @@ namespace WatchList.Pages
 
         public MovieData MovieData { get; set; }
 
-        public UserMovieData UserMovieData { get; set; }
-
         private readonly IMovieRepository _movieRepository;
 
         public MovieModel(IMovieRepository movieRepository)

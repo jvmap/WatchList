@@ -21,6 +21,8 @@ namespace WatchList.Data
                 data.Select(((string k, string v) t) => new KeyValuePair<string, string>(t.k, t.v)));
         }
 
+        public string MovieId => this["imdbID"];
+
         public string this[string property]
         {
             get

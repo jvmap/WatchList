@@ -24,20 +24,9 @@ else
         <img src="@poster" />
     }
     <p></p>
+    @await Component.InvokeAsync("UserMovieData", Model.MovieData.MovieId);
     <table>
         <tbody>
-            <tr>
-                <td style="min-width:200px;">Watched</td>
-                <td>@(Model.UserMovieData?.Watched ?? false)</td>
-            </tr>
-            <tr>
-                <td style="min-width:200px;">Rating</td>
-                <td>@((object)Model.UserMovieData?.Rating ?? "Not rated")</td>
-            </tr>
-            <tr>
-                <td style="min-width:200px;">WantToWatch</td>
-                <td>@(Model.UserMovieData?.WantToWatch ?? false)</td>
-            </tr>
             @foreach ((string key, string value) in Model.MovieData)
             {
                 @if (key == "Poster") continue;
