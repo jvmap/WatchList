@@ -11,7 +11,7 @@ namespace WatchList.Data
     /// </summary>
     public class UserMovieData
     {
-        public bool Watched { get; set; }
+        public int TimesWatched { get; set; }
 
         /// <summary>
         /// Movie Rating 1-5 or null.

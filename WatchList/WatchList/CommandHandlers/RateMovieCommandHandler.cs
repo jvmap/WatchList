@@ -27,7 +27,7 @@ namespace WatchList.CommandHandlers
         public async Task HandleCommandAsync(RateMovieCommand cmd)
         {
             UserMovieData movieData = await _userMovieRepository.GetUserMovieDataByIdAsync(cmd.MovieId);
-            if (movieData.Watched)
+            if (movieData.TimesWatched > 0)
             {
                 var evt = new RatedMovieEvent(cmd.MovieId, cmd.Rating);
                 await _eventStore.AddEventAsync(evt);

@@ -73,8 +73,8 @@ else
 
     <script>
         function refreshUserMovieData(data) {
-            $("#fld_watched").text(data.watched);
-            $("#td_ratings").toggle(!!data.watched)
+            $("#fld_watched").text(data.timesWatched + " times");
+            $("#td_ratings").toggle(data.timesWatched > 0)
             $("#fld_rating").text(data.rating ?? "Not rated");
             $("#fld_wantToWatch").text(data.wantToWatch);
             $("#btn_wantToWatch").toggle(!data.wantToWatch)

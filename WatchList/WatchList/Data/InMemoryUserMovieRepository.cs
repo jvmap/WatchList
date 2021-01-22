@@ -8,14 +8,14 @@ namespace WatchList.Data
 {
     public class InMemoryUserMovieRepository : IUserMovieRepository
     {
-        private readonly HashSet<string> _watchedMovies = new HashSet<string>();
+        private readonly Dictionary<string, int> _movieTimesWatched = new Dictionary<string, int>();
         private readonly HashSet<string> _wantToWatchMovies = new HashSet<string>();
         private readonly Dictionary<string, int> _movieRatings = new Dictionary<string, int>();
 
         public Task<UserMovieData> GetUserMovieDataByIdAsync(string movieId)
         {
             var result = new UserMovieData();
-            result.Watched = _watchedMovies.Contains(movieId);
+            result.TimesWatched = _movieTimesWatched.GetValueOrDefault(movieId);
             result.WantToWatch = _wantToWatchMovies.Contains(movieId);
             result.Rating = _movieRatings.GetValueOrDefault(movieId);
             if (result.Rating == 0)
@@ -28,7 +28,7 @@ namespace WatchList.Data
             switch (evt.Name)
             {
                 case "WatchedMovie":
-                    _watchedMovies.Add(evt.AggregateId);
+                    AddOrUpdate(_movieTimesWatched, evt.AggregateId, 1, times => times + 1);
                     _wantToWatchMovies.Remove(evt.AggregateId);
                     break;
                 case "WantToWatchMovie":
@@ -39,6 +39,18 @@ namespace WatchList.Data
                     break;
                 default:
                     break;
+            }
+        }
+
+        private static void AddOrUpdate<K, V>(Dictionary<K, V> dict, K key, V addValue, Func<V, V> updateValue)
+        {
+            if (dict.TryGetValue(key, out V value))
+            {
+                dict[key] = updateValue(value);
+            }
+            else
+            {
+                dict.Add(key, addValue);
             }
         }
 
