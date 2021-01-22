@@ -7,6 +7,6 @@ namespace WatchList.Events
 {
     public interface IEventConsumer
     {
-        void OnNext(IEvent evt);
+        Task OnNextAsync(IEvent evt);
     }
 }

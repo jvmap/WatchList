@@ -36,7 +36,7 @@ namespace WatchList.Services
         {
             foreach (IEvent evt in await _eventStore.GetEventsAsync())
             {
-                _repo.OnNext(evt);
+                await _repo.OnNextAsync(evt);
             }
         }
 

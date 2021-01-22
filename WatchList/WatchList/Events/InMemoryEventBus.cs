@@ -18,7 +18,7 @@ namespace WatchList.Events
             {
                 foreach (IEventConsumer consumer in _consumers)
                 {
-                    consumer.OnNext(evt);
+                    await consumer.OnNextAsync(evt);
                 }
             }
             finally
