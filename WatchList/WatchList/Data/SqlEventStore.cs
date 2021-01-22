@@ -61,6 +61,7 @@ namespace WatchList.Data
                 EventData = JsonConvert.DeserializeObject<Dictionary<string, string>>(evt.EventData)
                     .Select(kvp => (kvp.Key, kvp.Value))
                     .ToList();
+                TimeStamp = evt.TimeStamp;
             }
 
             public string AggregateId { get; }
@@ -68,6 +69,8 @@ namespace WatchList.Data
             public string Name { get; }
 
             public IEnumerable<(string, string)> EventData { get; }
+
+            public DateTimeOffset TimeStamp { get; }
         }
     }
 }

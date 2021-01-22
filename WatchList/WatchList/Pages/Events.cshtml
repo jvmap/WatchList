@@ -1,0 +1,37 @@
+﻿@page
+@model WatchList.Pages.EventsModel
+@{
+}
+<h1>@ViewData["Title"]</h1>
+<p>These are the events in the event store:</p>
+
+<table>
+    <thead>
+        <tr>
+            <th style="min-width:250px;max-width:500px;">TimeStamp</th>
+            <th style="min-width:150px;max-width:500px;">AggregateId</th>
+            <th style="min-width:200px;max-width:500px;">Name</th>
+            <th style="min-width:200px;max-width:500px;">Data</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var evt in Model.Events)
+        {
+        <tr>
+            <td>
+                @evt.TimeStamp
+            </td>
+            <td>@evt.AggregateId</td>
+            <td>@evt.Name</td>
+            <td>
+                @foreach ((string key, string value) kvp in evt.EventData)
+                {
+                    <span>
+                        @kvp.key = @kvp.value
+                    </span>
+                }
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
