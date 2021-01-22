@@ -9,5 +9,7 @@ namespace WatchList.Data
     public interface IEventStore
     {
         Task AddEventAsync(IEvent evt);
+
+        Task<IEnumerable<IEvent>> GetEventsAsync();
     }
 }

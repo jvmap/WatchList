@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -31,10 +32,13 @@ namespace WatchList
             //services.AddScoped<IMovieRepository, InMemoryMovieRepository>();
             services.AddScoped<IMovieRepository, OmdbMovieRepository>();
             services.AddSingleton<IUserMovieRepository, InMemoryUserMovieRepository>();
-            services.AddSingleton<IEventStore, InMemoryEventStore>();
+            //services.AddSingleton<IEventStore, InMemoryEventStore>();
+            services.AddSingleton<IEventStore, SqlEventStore>();
             services.AddSingleton<IEventBus, InMemoryEventBus>();
             services.Configure<OmdbApiConfig>(this.Configuration.GetSection("OmdbApi"));
             services.AddHostedService<EventRoutingService>();
+            services.AddDbContext<SqlEventStoreDbContext>(options =>
+                options.UseSqlite(Configuration.GetConnectionString("EventStore")), ServiceLifetime.Singleton);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

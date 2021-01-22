@@ -29,7 +29,20 @@ namespace WatchList.Data
             }
         }
 
-        class EventInfo
+        public async Task<IEnumerable<IEvent>> GetEventsAsync()
+        {
+            await _lock.WaitAsync();
+            try
+            {
+                return _events.ToList();
+            }
+            finally
+            {
+                _lock.Release();
+            }
+        }
+
+        class EventInfo : IEvent
         {
             public EventInfo(IEvent evt)
             {
@@ -38,11 +51,11 @@ namespace WatchList.Data
                 EventData = evt.EventData.ToList();
             }
             
-            string AggregateId { get; }
+            public string AggregateId { get; }
             
-            string Name { get; }
+            public string Name { get; }
 
-            IEnumerable<(string, string)> EventData { get; }
+            public IEnumerable<(string, string)> EventData { get; }
         }
     }
 }

@@ -14,16 +14,30 @@ namespace WatchList.Services
     {
         private readonly IEventBus _bus;
         private readonly IUserMovieRepository _repo;
+        private readonly IEventStore _eventStore;
 
-        public EventRoutingService(IEventBus bus, IUserMovieRepository repo)
+        public EventRoutingService(
+            IEventBus bus, 
+            IUserMovieRepository repo,
+            IEventStore eventStore)
         {
             this._bus = bus;
             this._repo = repo;
+            this._eventStore = eventStore;
         }
         
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            await WarmUpAsync();
             await _bus.SubscribeAsync(_repo);
+        }
+
+        private async Task WarmUpAsync()
+        {
+            foreach (IEvent evt in await _eventStore.GetEventsAsync())
+            {
+                _repo.OnNext(evt);
+            }
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
