@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WatchList.Migrations
 {
@@ -14,7 +15,8 @@ namespace WatchList.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     AggregateId = table.Column<string>(type: "TEXT", nullable: true),
                     Name = table.Column<string>(type: "TEXT", nullable: true),
-                    EventData = table.Column<string>(type: "TEXT", nullable: true)
+                    EventData = table.Column<string>(type: "TEXT", nullable: true),
+                    TimeStamp = table.Column<DateTimeOffset>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {

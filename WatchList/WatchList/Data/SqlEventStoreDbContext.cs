@@ -28,5 +28,7 @@ namespace WatchList.Data
         public string Name { get; set; }
 
         public string EventData { get; set; }
+
+        public DateTimeOffset TimeStamp { get; set; }
     }
 }

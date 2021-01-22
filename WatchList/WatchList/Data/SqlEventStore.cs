@@ -25,7 +25,8 @@ namespace WatchList.Data
                 {
                     AggregateId = evt.AggregateId,
                     Name = evt.Name,
-                    EventData = SerializeEventData(evt.EventData)
+                    EventData = SerializeEventData(evt.EventData),
+                    TimeStamp = DateTimeOffset.Now
                 });
                 await db.SaveChangesAsync();
             }
