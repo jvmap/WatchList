@@ -15,8 +15,17 @@ namespace WatchList.Data
         public SqlEventStore(DbContextOptions<SqlEventStoreDbContext> options)
         {
             this._options = options;
+            UpgradeDatabase();
         }
-        
+
+        private void UpgradeDatabase()
+        {
+            using (var db = new SqlEventStoreDbContext(_options))
+            {
+                db.Database.Migrate();
+            }
+        }
+
         public async Task AddEventAsync(IEvent evt)
         {
             using (var db = new SqlEventStoreDbContext(_options))
