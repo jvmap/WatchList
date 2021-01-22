@@ -22,7 +22,6 @@ namespace WatchList.Data
             this._apiKey = options.Value.ApiKey;
         }
 
-        // http://www.omdbapi.com/?apikey=***REMOVED***&t=star%20trek
         public async Task<MovieData> GetMovieByTitleAsync(string title)
         {
             HttpResponseMessage response = await _httpClient.GetAsync(GetRequestUriForTitle(title));
