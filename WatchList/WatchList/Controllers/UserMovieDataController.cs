@@ -8,6 +8,7 @@ using WatchList.CommandHandlers;
 using WatchList.Commands;
 using WatchList.Data;
 using WatchList.Events;
+using WatchList.Messages;
 
 namespace WatchList.Controllers
 {
@@ -49,6 +50,14 @@ namespace WatchList.Controllers
         {
             var handler = new WantToWatchMovieCommandHandler(_eventStore, _eventBus);
             await handler.HandleCommandAsync(new WantToWatchMovieCommand { MovieId = movieId });
+            return await PrivateGetAsync(movieId);
+        }
+
+        [HttpPost("{movieId}/rate")]
+        public async Task<UserMovieData> PostRateAsync(string movieId, [FromBody] RatingMessage msg)
+        {
+            var handler = new RateMovieCommandHandler(_eventStore, _eventBus, _repository);
+            await handler.HandleCommandAsync(new RateMovieCommand { MovieId = movieId, Rating = msg.Rating });
             return await PrivateGetAsync(movieId);
         }
 

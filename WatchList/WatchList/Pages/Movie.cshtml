@@ -40,7 +40,7 @@ else
             </tr>
             <tr>
                 <td style="min-width:200px;"></td>
-                <td>
+                <td id="td_ratings">
                     <button id="btn_rating1">*</button>
                     <button id="btn_rating2">**</button>
                     <button id="btn_rating3">***</button>
@@ -76,6 +76,10 @@ else
             $("#fld_watched").text(data.watched);
             if (data.watched) {
                 $("#btn_watched").remove();
+                $("#td_ratings").show();
+            }
+            else {
+                $("#td_ratings").hide();
             }
             $("#fld_rating").text(data.rating ?? "Not rated");
             $("#fld_wantToWatch").text(data.wantToWatch);
@@ -88,7 +92,8 @@ else
             return () => {
                 $.ajax({
                     url: "/UserMovieData/@Model.MovieData.MovieId/rate",
-                    data: { "rating": rating },
+                    data: JSON.stringify({ "rating": rating }),
+                    contentType: "application/json",
                     type: "POST",
                     success: refreshUserMovieData
                 })
