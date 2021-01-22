@@ -11,7 +11,8 @@ namespace WatchList.Data
     {
         private readonly Dictionary<string, int> _movieTimesWatched = new Dictionary<string, int>();
         private readonly HashSet<string> _wantToWatchMovies = new HashSet<string>();
-        private readonly Dictionary<string, int> _movieRatings = new Dictionary<string, int>();
+        private readonly Dictionary<string, (int count, float average)> _movieRatings 
+            = new Dictionary<string, (int count, float average)>();
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
 
         public async Task<UserMovieData> GetUserMovieDataByIdAsync(string movieId)
@@ -22,7 +23,7 @@ namespace WatchList.Data
             {
                 result.TimesWatched = _movieTimesWatched.GetValueOrDefault(movieId);
                 result.WantToWatch = _wantToWatchMovies.Contains(movieId);
-                result.Rating = _movieRatings.GetValueOrDefault(movieId);
+                result.Rating = _movieRatings.GetValueOrDefault(movieId).average;
             }
             finally
             {
@@ -48,7 +49,8 @@ namespace WatchList.Data
                         _wantToWatchMovies.Add(evt.AggregateId);
                         break;
                     case "RatedMovie":
-                        _movieRatings[evt.AggregateId] = int.Parse(GetProperty(evt.EventData, "rating"));
+                        int newRating = int.Parse(GetProperty(evt.EventData, "rating"));
+                        AddOrUpdate(_movieRatings, evt.AggregateId, (1, newRating), t => UpdateRating(t, newRating));
                         break;
                     default:
                         break;
@@ -58,6 +60,12 @@ namespace WatchList.Data
             {
                 _lock.Release();
             }
+        }
+
+        private (int count, float average) UpdateRating((int count, float average) @in, int newRating)
+        {
+            float newAverage = (@in.count * @in.average + newRating) / (@in.count + 1); 
+            return (@in.count + 1, newAverage);
         }
 
         private static void AddOrUpdate<K, V>(Dictionary<K, V> dict, K key, V addValue, Func<V, V> updateValue)

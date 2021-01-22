@@ -16,7 +16,7 @@ namespace WatchList.Data
         /// <summary>
         /// Movie Rating 1-5 or null.
         /// </summary>
-        public int? Rating { get; set; }
+        public float? Rating { get; set; }
 
         public bool WantToWatch { get; set; }
     }
