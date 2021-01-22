@@ -74,18 +74,10 @@ else
     <script>
         function refreshUserMovieData(data) {
             $("#fld_watched").text(data.watched);
-            if (data.watched) {
-                $("#btn_watched").remove();
-                $("#td_ratings").show();
-            }
-            else {
-                $("#td_ratings").hide();
-            }
+            $("#td_ratings").toggle(!!data.watched)
             $("#fld_rating").text(data.rating ?? "Not rated");
             $("#fld_wantToWatch").text(data.wantToWatch);
-            if (data.wantToWatch) {
-                $("#btn_wantToWatch").remove();
-            }
+            $("#btn_wantToWatch").toggle(!data.wantToWatch)
         }
 
         function getRatingCallback(rating) {

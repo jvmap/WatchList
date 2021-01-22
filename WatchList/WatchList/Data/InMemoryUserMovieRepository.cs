@@ -29,6 +29,7 @@ namespace WatchList.Data
             {
                 case "WatchedMovie":
                     _watchedMovies.Add(evt.AggregateId);
+                    _wantToWatchMovies.Remove(evt.AggregateId);
                     break;
                 case "WantToWatchMovie":
                     _wantToWatchMovies.Add(evt.AggregateId);
