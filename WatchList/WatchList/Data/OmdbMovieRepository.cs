@@ -14,6 +14,7 @@ namespace WatchList.Data
     {
         private readonly string _apiKey;
 
+        // MS docs: "HttpClient is intended to be instantiated once and re-used throughout the life of an application."
         private readonly static HttpClient _httpClient = new HttpClient();
 
         public OmdbMovieRepository(IOptions<OmdbApiConfig> options)
