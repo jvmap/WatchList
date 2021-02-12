@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WatchList.Commands;
 using WatchList.Data;
+using WatchList.Domain;
 using WatchList.Events;
 
 namespace WatchList.CommandHandlers
@@ -26,8 +27,8 @@ namespace WatchList.CommandHandlers
 
         public async Task HandleCommandAsync(RateMovieCommand cmd)
         {
-            UserMovieData movieData = await _userMovieRepository.GetUserMovieDataByIdAsync(cmd.MovieId);
-            if (movieData.TimesWatched > 0)
+            Movie movie = await ReviveMovieAsync(cmd.MovieId);
+            if (movie.TimesWatched > 0)
             {
                 var evt = new RatedMovieEvent(cmd.MovieId, cmd.Rating);
                 await _eventStore.AddEventAsync(evt);
@@ -35,6 +36,38 @@ namespace WatchList.CommandHandlers
             }
             else
                 throw new InvalidOperationException("Please watch movie before rating it.");
+        }
+
+        private async Task<Movie> ReviveMovieAsync(string movieId)
+        {
+            var processor = new EventProcessor();
+            foreach (IEvent evt in await _eventStore.GetEventsAsync(movieId))
+            {
+                processor.OnNext(evt);
+            }
+            return processor.Movie;
+        }
+
+        private class EventProcessor
+        {
+            public Movie Movie { get; private set; }
+
+            public EventProcessor()
+            {
+                Movie = new Movie();
+            }
+
+            public void OnNext(IEvent evt)
+            {
+                switch (evt.Name)
+                {
+                    case "WatchedMovie":
+                        Movie.Watched();
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
     }
 }

@@ -42,6 +42,21 @@ namespace WatchList.Data
             }
         }
 
+        public async Task<IEnumerable<IEvent>> GetEventsAsync(string aggregateId)
+        {
+            await _lock.WaitAsync();
+            try
+            {
+                return _events
+                    .Where(ev => ev.AggregateId == aggregateId)
+                    .ToList();
+            }
+            finally
+            {
+                _lock.Release();
+            }
+        }
+
         class EventInfo : IEvent
         {
             public EventInfo(IEvent evt)

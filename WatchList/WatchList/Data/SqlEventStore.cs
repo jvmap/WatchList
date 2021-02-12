@@ -52,6 +52,18 @@ namespace WatchList.Data
             }
         }
 
+        public async Task<IEnumerable<IEvent>> GetEventsAsync(string aggregateId)
+        {
+            using (var db = new SqlEventStoreDbContext(_options))
+            {
+                return await db.Events
+                    .OrderBy(evt => evt.Id)
+                    .Where(evt => evt.AggregateId == aggregateId)
+                    .Select(evt => new EventInfo(evt))
+                    .ToListAsync();
+            }
+        }
+
         private string SerializeEventData(IEnumerable<(string, string)> eventData)
         {
             var dict = new Dictionary<string, string>(eventData

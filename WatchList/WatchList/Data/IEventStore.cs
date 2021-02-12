@@ -11,5 +11,7 @@ namespace WatchList.Data
         Task AddEventAsync(IEvent evt);
 
         Task<IEnumerable<IEvent>> GetEventsAsync();
+
+        Task<IEnumerable<IEvent>> GetEventsAsync(string aggregateId);
     }
 }
