@@ -7,7 +7,7 @@ namespace WatchList.Events
 {
     public interface IEventBus
     {
-        Task PublishEventAsync(IEvent evt);
+        Task PublishEventAsync(Event evt);
 
         Task SubscribeAsync(IEventConsumer consumer);
     }

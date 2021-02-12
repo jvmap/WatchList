@@ -15,10 +15,10 @@ namespace WatchList.Data
 
         }
         
-        public DbSet<Event> Events { get; set; }
+        public DbSet<EventDto> Events { get; set; }
     }
 
-    public class Event
+    public class EventDto
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }

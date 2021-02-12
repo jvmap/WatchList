@@ -34,7 +34,7 @@ namespace WatchList.Data
             return result;
         }
 
-        public async Task OnNextAsync(IEvent evt)
+        public async Task OnNextAsync(Event evt)
         {
             await _lock.WaitAsync();
             try

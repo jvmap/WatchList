@@ -34,7 +34,7 @@ namespace WatchList.Services
 
         private async Task WarmUpAsync()
         {
-            foreach (IEvent evt in await _eventStore.GetEventsAsync())
+            foreach (Event evt in await _eventStore.GetEventsAsync())
             {
                 await _repo.OnNextAsync(evt);
             }

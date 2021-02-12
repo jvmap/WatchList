@@ -19,7 +19,7 @@ namespace WatchList.CommandHandlers
 
         public async Task HandleCommandAsync(WantToWatchMovieCommand cmd)
         {
-            var evt = new WantToWatchMovieEvent(cmd.MovieId);
+            var evt = new WantToWatchMovieEvent { AggregateId = cmd.MovieId };
             await _eventStore.AddEventAsync(evt);
             await _eventBus.PublishEventAsync(evt);
         }

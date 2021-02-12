@@ -12,16 +12,15 @@ namespace WatchList.Data
     /// </summary>
     public class InMemoryEventStore : IEventStore
     {
-        private readonly List<EventInfo> _events = new List<EventInfo>();
+        private readonly List<Event> _events = new List<Event>();
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
         
-        public async Task AddEventAsync(IEvent evt)
+        public async Task AddEventAsync(Event evt)
         {
-            var nfo = new EventInfo(evt);
             await _lock.WaitAsync();
             try
             {
-                _events.Add(nfo);
+                _events.Add(evt);
             }
             finally
             {
@@ -29,7 +28,7 @@ namespace WatchList.Data
             }
         }
 
-        public async Task<IEnumerable<IEvent>> GetEventsAsync()
+        public async Task<IEnumerable<Event>> GetEventsAsync()
         {
             await _lock.WaitAsync();
             try
@@ -42,7 +41,7 @@ namespace WatchList.Data
             }
         }
 
-        public async Task<IEnumerable<IEvent>> GetEventsAsync(string aggregateId)
+        public async Task<IEnumerable<Event>> GetEventsAsync(string aggregateId)
         {
             await _lock.WaitAsync();
             try
@@ -55,22 +54,6 @@ namespace WatchList.Data
             {
                 _lock.Release();
             }
-        }
-
-        class EventInfo : IEvent
-        {
-            public EventInfo(IEvent evt)
-            {
-                AggregateId = evt.AggregateId;
-                Name = evt.Name;
-                EventData = evt.EventData.ToList();
-            }
-            
-            public string AggregateId { get; }
-            
-            public string Name { get; }
-
-            public IEnumerable<(string, string)> EventData { get; }
         }
     }
 }

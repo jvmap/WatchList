@@ -11,7 +11,7 @@ namespace WatchList.Events
         private static readonly HashSet<IEventConsumer> _consumers = new HashSet<IEventConsumer>();
         private static readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
 
-        public async Task PublishEventAsync(IEvent evt)
+        public async Task PublishEventAsync(Event evt)
         {
             await _lock.WaitAsync();
             try

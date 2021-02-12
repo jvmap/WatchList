@@ -13,7 +13,7 @@ namespace WatchList.Pages
     {
         private readonly IEventStore _eventStore;
 
-        public IEnumerable<PageEventInfo> Events { get; set; }
+        public IEnumerable<Event> Events { get; set; }
 
         public EventsModel(IEventStore eventStore)
         {
@@ -23,28 +23,8 @@ namespace WatchList.Pages
         public async Task OnGetAsync()
         {
             Events = (await _eventStore.GetEventsAsync())
-                .Select(e => new PageEventInfo(e))
                 .Reverse()
                 .ToList();
-        }
-
-        public class PageEventInfo
-        {
-            public PageEventInfo(IEvent evt)
-            {
-                TimeStamp = evt.GetType().GetProperty("TimeStamp").GetValue(evt, null);
-                AggregateId = evt.AggregateId;
-                Name = evt.Name;
-                EventData = evt.EventData;
-            }
-
-            public dynamic TimeStamp { get; }
-
-            public string AggregateId { get; }
-
-            public string Name { get; }
-
-            public IEnumerable<(string, string)> EventData { get; }
         }
     }
 }

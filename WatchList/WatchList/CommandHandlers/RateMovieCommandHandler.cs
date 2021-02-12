@@ -30,7 +30,7 @@ namespace WatchList.CommandHandlers
             Movie movie = await ReviveMovieAsync(cmd.MovieId);
             if (movie.TimesWatched > 0)
             {
-                var evt = new RatedMovieEvent(cmd.MovieId, cmd.Rating);
+                var evt = new RatedMovieEvent { AggregateId = cmd.MovieId, Rating = cmd.Rating };
                 await _eventStore.AddEventAsync(evt);
                 await _eventBus.PublishEventAsync(evt);
             }
@@ -41,7 +41,7 @@ namespace WatchList.CommandHandlers
         private async Task<Movie> ReviveMovieAsync(string movieId)
         {
             var processor = new EventProcessor();
-            foreach (IEvent evt in await _eventStore.GetEventsAsync(movieId))
+            foreach (Event evt in await _eventStore.GetEventsAsync(movieId))
             {
                 processor.OnNext(evt);
             }
@@ -57,7 +57,7 @@ namespace WatchList.CommandHandlers
                 Movie = new Movie();
             }
 
-            public void OnNext(IEvent evt)
+            public void OnNext(Event evt)
             {
                 switch (evt.Name)
                 {
