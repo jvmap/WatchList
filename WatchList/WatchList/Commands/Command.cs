@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WatchList.Events;
 
 namespace WatchList.Commands
 {
-    public class WatchedMovieCommand : Command
+    public abstract class Command
     {
+        public string AggregateId { get; set; }
     }
 }

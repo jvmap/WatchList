@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WatchList.CommandHandlers;
 using WatchList.Config;
 using WatchList.Data;
 using WatchList.Events;
@@ -35,6 +36,7 @@ namespace WatchList
             //services.AddSingleton<IEventStore, InMemoryEventStore>();
             services.AddSingleton<IEventStore, SqlEventStore>();
             services.AddSingleton<IEventBus, InMemoryEventBus>();
+            services.AddScoped<CommandInvoker>();
             services.Configure<OmdbApiConfig>(this.Configuration.GetSection("OmdbApi"));
             services.AddHostedService<EventRoutingService>();
             services.AddDbContext<SqlEventStoreDbContext>(options =>

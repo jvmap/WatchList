@@ -28,17 +28,20 @@ namespace WatchList.Data
             }
         }
 
-        public async Task AddEventAsync(Event evt)
+        public async Task AddEventsAsync(IEnumerable<Event> evts)
         {
             using (var db = new SqlEventStoreDbContext(_options))
             {
-                db.Events.Add(new EventDto
+                foreach (Event evt in evts)
                 {
-                    AggregateId = evt.AggregateId,
-                    Name = GetEventName(evt),
-                    EventData = SerializeEventData(GetEventData(evt)),
-                    TimeStamp = DateTimeOffset.Now
-                });
+                    db.Events.Add(new EventDto
+                    {
+                        AggregateId = evt.AggregateId,
+                        Name = GetEventName(evt),
+                        EventData = SerializeEventData(GetEventData(evt)),
+                        TimeStamp = DateTimeOffset.Now
+                    });
+                }
                 await db.SaveChangesAsync();
             }
         }

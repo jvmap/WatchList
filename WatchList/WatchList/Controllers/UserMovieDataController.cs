@@ -17,18 +17,15 @@ namespace WatchList.Controllers
     public class UserMovieDataController : ControllerBase
     {
         private readonly IUserMovieRepository _repository;
-        private readonly IEventStore _eventStore;
-        private readonly IEventBus _eventBus;
+        private readonly CommandInvoker _invoker;
 
         public UserMovieDataController(
             IUserMovieRepository repository,
-            IEventStore eventStore,
-            IEventBus eventBus
+            CommandInvoker invoker
             )
         {
             this._repository = repository;
-            this._eventStore = eventStore;
-            this._eventBus = eventBus;
+            this._invoker = invoker;
         }
         
         [HttpGet("{movieId}")]
@@ -40,24 +37,27 @@ namespace WatchList.Controllers
         [HttpPost("{movieId}/watched")]
         public async Task<UserMovieData> PostWatchedAsync(string movieId)
         {
-            var handler = new WatchedMovieCommandHandler(_eventStore, _eventBus);
-            await handler.HandleCommandAsync(new WatchedMovieCommand { MovieId = movieId });
+            var handler = new WatchedMovieCommandHandler();
+            var cmd = new WatchedMovieCommand { AggregateId = movieId };
+            await _invoker.InvokeAsync(cmd, handler);
             return await PrivateGetAsync(movieId);
         }
 
         [HttpPost("{movieId}/wantToWatch")]
         public async Task<UserMovieData> PostWantToWatchAsync(string movieId)
         {
-            var handler = new WantToWatchMovieCommandHandler(_eventStore, _eventBus);
-            await handler.HandleCommandAsync(new WantToWatchMovieCommand { MovieId = movieId });
+            var handler = new WantToWatchMovieCommandHandler();
+            var cmd = new WantToWatchMovieCommand { AggregateId = movieId };
+            await _invoker.InvokeAsync(cmd, handler);
             return await PrivateGetAsync(movieId);
         }
 
         [HttpPost("{movieId}/rate")]
         public async Task<UserMovieData> PostRateAsync(string movieId, [FromBody] RatingMessage msg)
         {
-            var handler = new RateMovieCommandHandler(_eventStore, _eventBus);
-            await handler.HandleCommandAsync(new RateMovieCommand { MovieId = movieId, Rating = msg.Rating });
+            var handler = new RateMovieCommandHandler();
+            var cmd = new RateMovieCommand { AggregateId = movieId, Rating = msg.Rating };
+            await _invoker.InvokeAsync(cmd, handler);
             return await PrivateGetAsync(movieId);
         }
 

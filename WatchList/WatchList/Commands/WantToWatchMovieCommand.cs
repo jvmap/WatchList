@@ -5,8 +5,7 @@ using System.Threading.Tasks;
 
 namespace WatchList.Commands
 {
-    public class WantToWatchMovieCommand
+    public class WantToWatchMovieCommand : Command
     {
-        public string MovieId { get; set; }
     }
 }

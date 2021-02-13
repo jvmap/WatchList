@@ -15,12 +15,12 @@ namespace WatchList.Data
         private readonly List<Event> _events = new List<Event>();
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
         
-        public async Task AddEventAsync(Event evt)
+        public async Task AddEventsAsync(IEnumerable<Event> evts)
         {
             await _lock.WaitAsync();
             try
             {
-                _events.Add(evt);
+                _events.AddRange(evts);
             }
             finally
             {

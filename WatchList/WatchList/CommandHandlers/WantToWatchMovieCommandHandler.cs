@@ -1,28 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using WatchList.Commands;
 using WatchList.Data;
+using WatchList.Domain.Entities;
 using WatchList.Domain.Events;
 using WatchList.Events;
 
 namespace WatchList.CommandHandlers
 {
-    internal class WantToWatchMovieCommandHandler
+    internal class WantToWatchMovieCommandHandler : ICommandHandler<WantToWatchMovieCommand, Movie>
     {
-        private readonly IEventStore _eventStore;
-        private readonly IEventBus _eventBus;
-
-        public WantToWatchMovieCommandHandler(IEventStore eventStore, IEventBus eventBus)
+        public IEnumerable<Event> Handle(Movie movie, WantToWatchMovieCommand cmd)
         {
-            this._eventStore = eventStore;
-            this._eventBus = eventBus;
-        }
-
-        public async Task HandleCommandAsync(WantToWatchMovieCommand cmd)
-        {
-            var evt = new WantToWatchMovieEvent { AggregateId = cmd.MovieId };
-            await _eventStore.AddEventAsync(evt);
-            await _eventBus.PublishEventAsync(evt);
+            yield return new WantToWatchMovieEvent { AggregateId = cmd.AggregateId };
         }
     }
 }
