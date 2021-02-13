@@ -26,6 +26,14 @@ namespace WatchList.Pages
                 .ToList();
         }
 
+        public string GetEventName(Event evt)
+        {
+            string name = evt.GetType().Name;
+            if (name.EndsWith("Event"))
+                name = name[0..^5];
+            return name;
+        }
+
         public IEnumerable<(string, string)> GetEventData(Event evt)
         {
             return evt

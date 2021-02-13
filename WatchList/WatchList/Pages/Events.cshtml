@@ -22,7 +22,7 @@
                 @evt.Timestamp
             </td>
             <td>@evt.AggregateId</td>
-            <td>@evt.Name</td>
+            <td>@Model.GetEventName(evt)</td>
             <td>
                 @foreach ((string key, string value) kvp in Model.GetEventData(evt))
                 {

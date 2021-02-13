@@ -35,7 +35,7 @@ namespace WatchList.Data
                 db.Events.Add(new EventDto
                 {
                     AggregateId = evt.AggregateId,
-                    Name = evt.Name,
+                    Name = GetEventName(evt),
                     EventData = SerializeEventData(GetEventData(evt)),
                     TimeStamp = DateTimeOffset.Now
                 });
@@ -66,6 +66,15 @@ namespace WatchList.Data
                     .Select(evt => ConstructEvent(evt))
                     .ToList();
             }
+        }
+
+        private static string GetEventName(Event evt)
+        {
+            string name = evt.GetType().Name;
+            if (!name.EndsWith("Event"))
+                throw new ArgumentException("Event classnames must end with \"Event\" Got: " + evt.GetType().Name);
+            name = name[0..^5];
+            return name;
         }
 
         private static IEnumerable<(string, string)> GetEventData(Event evt)
