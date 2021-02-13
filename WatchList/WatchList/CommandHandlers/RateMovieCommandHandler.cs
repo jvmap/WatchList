@@ -13,16 +13,13 @@ namespace WatchList.CommandHandlers
     {
         private readonly IEventStore _eventStore;
         private readonly IEventBus _eventBus;
-        private readonly IUserMovieRepository _userMovieRepository;
 
         public RateMovieCommandHandler(
             IEventStore eventStore, 
-            IEventBus eventBus,
-            IUserMovieRepository userMovieRepository)
+            IEventBus eventBus)
         {
             this._eventStore = eventStore;
             this._eventBus = eventBus;
-            this._userMovieRepository = userMovieRepository;
         }
 
         public async Task HandleCommandAsync(RateMovieCommand cmd)

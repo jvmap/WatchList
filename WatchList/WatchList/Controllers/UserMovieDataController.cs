@@ -56,7 +56,7 @@ namespace WatchList.Controllers
         [HttpPost("{movieId}/rate")]
         public async Task<UserMovieData> PostRateAsync(string movieId, [FromBody] RatingMessage msg)
         {
-            var handler = new RateMovieCommandHandler(_eventStore, _eventBus, _repository);
+            var handler = new RateMovieCommandHandler(_eventStore, _eventBus);
             await handler.HandleCommandAsync(new RateMovieCommand { MovieId = movieId, Rating = msg.Rating });
             return await PrivateGetAsync(movieId);
         }
