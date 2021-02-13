@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WatchList.Domain.Events;
 
 namespace WatchList.Domain.Entities
 {
@@ -9,7 +10,7 @@ namespace WatchList.Domain.Entities
     {
         public int TimesWatched { get; private set; }
 
-        public void Watched()
+        public void OnNext(WatchedMovieEvent evt)
         {
             TimesWatched = TimesWatched + 1;
         }

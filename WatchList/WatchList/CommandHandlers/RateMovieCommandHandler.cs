@@ -38,28 +38,13 @@ namespace WatchList.CommandHandlers
 
         private async Task<Movie> ReviveMovieAsync(string movieId)
         {
-            var processor = new EventProcessor();
-            var dispatcher = new EventDispatcher(processor);
+            var movie = new Movie();
+            var dispatcher = new EventDispatcher(movie);
             foreach (Event evt in await _eventStore.GetEventsAsync(movieId))
             {
                 dispatcher.OnNext(evt);
             }
-            return processor.Movie;
-        }
-
-        private class EventProcessor
-        {
-            public Movie Movie { get; private set; }
-
-            public EventProcessor()
-            {
-                Movie = new Movie();
-            }
-
-            public void OnNext(WatchedMovieEvent evt)
-            {
-                Movie.Watched();
-            }
+            return movie;
         }
     }
 }
