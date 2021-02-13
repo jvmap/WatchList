@@ -36,7 +36,7 @@ namespace WatchList.Data
                 {
                     AggregateId = evt.AggregateId,
                     Name = evt.Name,
-                    EventData = SerializeEventData(evt.EventData),
+                    EventData = SerializeEventData(GetEventData(evt)),
                     TimeStamp = DateTimeOffset.Now
                 });
                 await db.SaveChangesAsync();
@@ -66,6 +66,26 @@ namespace WatchList.Data
                     .Select(evt => ConstructEvent(evt))
                     .ToList();
             }
+        }
+
+        private static IEnumerable<(string, string)> GetEventData(Event evt)
+        {
+            return evt
+                .GetType()
+                .GetProperties()
+                .Where(p => p.DeclaringType != typeof(Event))
+                .Select(p => (ToCamelCase(p.Name), Convert.ToString(p.GetValue(evt), CultureInfo.InvariantCulture)))
+                .ToList();
+        }
+
+        private static string ToCamelCase(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+                return name;
+            else if (Char.IsLower(name[0]))
+                return name;
+            else
+                return Char.ToLower(name[0]) + name.Substring(1);
         }
 
         private Event ConstructEvent(EventDto evtDto)

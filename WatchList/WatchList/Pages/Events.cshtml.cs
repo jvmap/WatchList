@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WatchList.Data;
 using WatchList.Events;
@@ -24,6 +23,16 @@ namespace WatchList.Pages
         {
             Events = (await _eventStore.GetEventsAsync())
                 .Reverse()
+                .ToList();
+        }
+
+        public IEnumerable<(string, string)> GetEventData(Event evt)
+        {
+            return evt
+                .GetType()
+                .GetProperties()
+                .Where(p => p.DeclaringType != typeof(Event))
+                .Select(p => (p.Name, Convert.ToString(p.GetValue(evt))))
                 .ToList();
         }
     }

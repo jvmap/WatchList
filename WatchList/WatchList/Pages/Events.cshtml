@@ -24,10 +24,10 @@
             <td>@evt.AggregateId</td>
             <td>@evt.Name</td>
             <td>
-                @foreach ((string key, string value) kvp in evt.EventData)
+                @foreach ((string key, string value) kvp in Model.GetEventData(evt))
                 {
                     <span>
-                        @kvp.key = @kvp.value
+                        @kvp.key: @kvp.value
                     </span>
                 }
             </td>
