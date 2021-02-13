@@ -14,29 +14,62 @@ namespace WatchList.Events
         {
             this._target = target;
         }
-        
+
+        public void OnNext(Event evt)
+        {
+            foreach (MethodInfo method in GetApplicableMethods(evt, nameof(OnNext), typeof(void)))
+                InvokeMethod(evt, method);
+        }
+
         public async Task OnNextAsync(Event evt)
+        {
+            foreach (MethodInfo method in GetApplicableMethods(evt, nameof(OnNextAsync), typeof(Task)))
+                await InvokeMethodAsync(evt, method);
+        }
+
+        private IEnumerable<MethodInfo> GetApplicableMethods(
+            Event evt,
+            string expectedMethodName,
+            Type expectedReturnType)
         {
             Type eventType = evt.GetType();
             Type targetType = _target.GetType();
             IEnumerable<MethodInfo> methods = targetType
                 .GetMethods()
-                .Where(method => IsApplicable(method, eventType))
+                .Where(method => IsApplicable(method, eventType, expectedMethodName, expectedReturnType))
                 .ToList();
-            foreach (MethodInfo method in methods)
-                await (Task) method.Invoke(_target, new object[] { evt });
+            return methods;
         }
 
-        private static bool IsApplicable(MethodInfo method, Type eventType)
+        private static bool IsApplicable(
+            MethodInfo method, 
+            Type eventType, 
+            string expectedMethodName, 
+            Type expectedReturnType)
         {
-            if (method.Name == nameof(OnNextAsync) 
-                && method.ReturnType == typeof(Task))
+            if (method.Name == expectedMethodName
+                && method.ReturnType == expectedReturnType)
             {
-                ParameterInfo[] @params = method.GetParameters();
-                return @params.Length == 1
-                    && @params[0].ParameterType == eventType;
+                return HasSingleMatchingParameter(method, eventType);
             }
             return false;
+        }
+
+        private static bool HasSingleMatchingParameter(MethodInfo method, Type eventType)
+        {
+            ParameterInfo[] @params = method.GetParameters();
+            return @params.Length == 1
+                && @params[0].ParameterType == eventType;
+        }
+
+        private void InvokeMethod(Event evt, MethodInfo method)
+        {
+            method.Invoke(_target, new object[] { evt });
+        }
+
+        private Task InvokeMethodAsync(Event evt, MethodInfo method)
+        {
+            return (Task) method.Invoke(_target, new object[] { evt });
         }
     }
 }

@@ -38,9 +38,10 @@ namespace WatchList.CommandHandlers
         private async Task<Movie> ReviveMovieAsync(string movieId)
         {
             var processor = new EventProcessor();
+            var dispatcher = new EventDispatcher(processor);
             foreach (Event evt in await _eventStore.GetEventsAsync(movieId))
             {
-                processor.OnNext(evt);
+                dispatcher.OnNext(evt);
             }
             return processor.Movie;
         }
@@ -54,16 +55,9 @@ namespace WatchList.CommandHandlers
                 Movie = new Movie();
             }
 
-            public void OnNext(Event evt)
+            public void OnNext(WatchedMovieEvent evt)
             {
-                switch (evt.Name)
-                {
-                    case "WatchedMovie":
-                        Movie.Watched();
-                        break;
-                    default:
-                        break;
-                }
+                Movie.Watched();
             }
         }
     }
