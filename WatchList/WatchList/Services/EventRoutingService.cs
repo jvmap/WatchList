@@ -13,7 +13,7 @@ namespace WatchList.Services
     public class EventRoutingService : IHostedService
     {
         private readonly IEventBus _bus;
-        private readonly IUserMovieRepository _repo;
+        private readonly IEventConsumer _repo;
         private readonly IEventStore _eventStore;
 
         public EventRoutingService(
@@ -22,7 +22,7 @@ namespace WatchList.Services
             IEventStore eventStore)
         {
             this._bus = bus;
-            this._repo = repo;
+            this._repo = new EventDispatcher(repo);
             this._eventStore = eventStore;
         }
         

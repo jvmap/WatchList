@@ -6,7 +6,10 @@ using WatchList.Events;
 
 namespace WatchList.Data
 {
-    public interface IUserMovieRepository : IEventConsumer
+    public interface IUserMovieRepository
+        : IEventConsumer<RatedMovieEvent>
+        , IEventConsumer<WantToWatchMovieEvent>
+        , IEventConsumer<WatchedMovieEvent>
     {
         Task<UserMovieData> GetUserMovieDataByIdAsync(string movieId);
     }

@@ -34,27 +34,40 @@ namespace WatchList.Data
             return result;
         }
 
-        public async Task OnNextAsync(Event evt)
+        public async Task OnNextAsync(RatedMovieEvent evt)
         {
             await _lock.WaitAsync();
             try
             {
-                switch (evt.Name)
-                {
-                    case "WatchedMovie":
-                        AddOrUpdate(_movieTimesWatched, evt.AggregateId, 1, times => times + 1);
-                        _wantToWatchMovies.Remove(evt.AggregateId);
-                        break;
-                    case "WantToWatchMovie":
-                        _wantToWatchMovies.Add(evt.AggregateId);
-                        break;
-                    case "RatedMovie":
-                        int newRating = int.Parse(GetProperty(evt.EventData, "rating"));
-                        AddOrUpdate(_movieRatings, evt.AggregateId, (1, newRating), t => UpdateRating(t, newRating));
-                        break;
-                    default:
-                        break;
-                }
+                int newRating = evt.Rating;
+                AddOrUpdate(_movieRatings, evt.AggregateId, (1, newRating), t => UpdateRating(t, newRating));
+            }
+            finally
+            {
+                _lock.Release();
+            }
+        }
+
+        public async Task OnNextAsync(WantToWatchMovieEvent evt)
+        {
+            await _lock.WaitAsync();
+            try
+            {                
+                _wantToWatchMovies.Add(evt.AggregateId);
+            }
+            finally
+            {
+                _lock.Release();
+            }
+        }
+
+        public async Task OnNextAsync(WatchedMovieEvent evt)
+        {
+            await _lock.WaitAsync();
+            try
+            {
+                AddOrUpdate(_movieTimesWatched, evt.AggregateId, 1, times => times + 1);
+                _wantToWatchMovies.Remove(evt.AggregateId);
             }
             finally
             {
@@ -78,13 +91,6 @@ namespace WatchList.Data
             {
                 dict.Add(key, addValue);
             }
-        }
-
-        private static string GetProperty(IEnumerable<(string, string)> keyValuePairs, string key)
-        {
-            return keyValuePairs
-                .First(kvp => kvp.Item1 == key)
-                .Item2;
         }
     }
 }

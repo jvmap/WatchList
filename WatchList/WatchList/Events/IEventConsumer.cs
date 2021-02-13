@@ -9,4 +9,10 @@ namespace WatchList.Events
     {
         Task OnNextAsync(Event evt);
     }
+
+    public interface IEventConsumer<TEvent>
+        where TEvent: Event
+    {
+        Task OnNextAsync(TEvent evt);
+    }
 }
