@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WatchList.Events
+namespace WatchList.Domain.Events
 {
-    public class WatchedMovieEvent : Event
+    public class WantToWatchMovieEvent : Event
     {
     }
 }

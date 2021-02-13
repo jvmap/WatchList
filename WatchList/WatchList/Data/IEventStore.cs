@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WatchList.Events;
+using WatchList.Domain.Events;
 
 namespace WatchList.Data
 {

@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WatchList.Events
+namespace WatchList.Domain.Events
 {
     public class RatedMovieEvent : Event
     {

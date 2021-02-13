@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WatchList.Commands;
 using WatchList.Data;
+using WatchList.Domain.Events;
 using WatchList.Events;
 
 namespace WatchList.CommandHandlers

@@ -6,7 +6,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using WatchList.Events;
+using WatchList.Domain.Events;
 
 namespace WatchList.Data
 {
@@ -99,7 +99,7 @@ namespace WatchList.Data
 
         private Event ConstructEvent(EventDto evtDto)
         {
-            string typeName = "WatchList.Events." + evtDto.Name + "Event";
+            string typeName = "WatchList.Domain.Events." + evtDto.Name + "Event,WatchList.Domain";
             Type eventType = Type.GetType(typeName, throwOnError: true);
             Event evt = (Event)Activator.CreateInstance(eventType);
             eventType

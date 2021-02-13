@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WatchList.Domain
+namespace WatchList.Domain.Entities
 {
     public class Movie
     {

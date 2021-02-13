@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using WatchList.Data;
+using WatchList.Domain.Events;
 using WatchList.Events;
 
 namespace WatchList.Services
