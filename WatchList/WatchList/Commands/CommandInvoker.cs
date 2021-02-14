@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WatchList.Commands;
 using WatchList.Data;
+using WatchList.Domain.Commands;
+using WatchList.Domain.Entities;
 using WatchList.Domain.Events;
 using WatchList.Events;
 
-namespace WatchList.CommandHandlers
+namespace WatchList.Commands
 {
     public class CommandInvoker
     {
@@ -20,16 +21,13 @@ namespace WatchList.CommandHandlers
             this._eventBus = eventBus;
         }
         
-        public async Task InvokeAsync<TEntity, TCommand>(
-            TCommand cmd, 
-            ICommandHandler<TCommand, TEntity> handler
-            )
-            where TCommand : Command
-            where TEntity : new()
+        public async Task InvokeAsync<TEntity>(Command<TEntity> cmd)
+            where TEntity : Entity, new()
         {
             TEntity entity = await ReviveAsync<TEntity>(cmd.AggregateId);
-            IEnumerable<Event> newEvents = handler
-                .Handle(entity, cmd)
+            var dispatcher = new CommandDispatcher<TEntity>(entity);
+            IEnumerable<Event> newEvents = dispatcher
+                .Handle(cmd)
                 .ToList();
             await _eventStore.AddEventsAsync(newEvents);
             foreach (Event @event in newEvents)
@@ -39,9 +37,9 @@ namespace WatchList.CommandHandlers
         }
 
         private async Task<TEntity> ReviveAsync<TEntity>(string aggregateId)
-            where TEntity : new()
+            where TEntity : Entity, new()
         {
-            var entity = new TEntity();
+            var entity = new TEntity() { AggregateId = aggregateId };
             var dispatcher = new EventDispatcher(entity);
             foreach (Event evt in await _eventStore.GetEventsAsync(aggregateId))
             {

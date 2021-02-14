@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WatchList.CommandHandlers;
+using WatchList.Commands;
 using WatchList.Config;
 using WatchList.Data;
 using WatchList.Events;
