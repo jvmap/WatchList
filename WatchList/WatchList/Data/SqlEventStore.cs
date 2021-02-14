@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 using WatchList.Domain.Events;
@@ -46,29 +47,30 @@ namespace WatchList.Data
             }
         }
 
-        public async Task<IEnumerable<Event>> GetEventsAsync()
+        public Task<IEnumerable<Event>> GetEventsAsync()
         {
-            using (var db = new SqlEventStoreDbContext(_options))
-            {
-                return (await db.Events
-                    .OrderBy(evt => evt.Id)
-                    .ToListAsync())
-                    .Select(ConstructEvent)
-                    .ToList();
-            }
+            return PrivateGetEventsAsync();
         }
 
-        public async Task<IEnumerable<Event>> GetEventsAsync(string aggregateId)
+        public Task<IEnumerable<Event>> GetEventsAsync(string aggregateId)
         {
+            return PrivateGetEventsAsync(where: evt => evt.AggregateId == aggregateId);
+        }
+
+        private async Task<IEnumerable<Event>> PrivateGetEventsAsync(Expression<Func<EventDto, bool>> where = null)
+        {
+            IEnumerable<EventDto> dtos;
             using (var db = new SqlEventStoreDbContext(_options))
             {
-                return (await db.Events
-                    .OrderBy(evt => evt.Id)
-                    .Where(evt => evt.AggregateId == aggregateId)
-                    .ToListAsync())
-                    .Select(evt => ConstructEvent(evt))
-                    .ToList();
+                IQueryable<EventDto> query = db.Events;
+                if (where != null)
+                    query = query.Where(where);
+                query = query.OrderBy(evt => evt.Id);
+                dtos = await query.ToListAsync();
             }
+            return dtos
+                .Select(evt => ConstructEvent(evt))
+                .ToList();
         }
 
         private static string GetEventName(Event evt)
