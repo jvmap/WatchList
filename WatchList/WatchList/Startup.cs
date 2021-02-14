@@ -37,6 +37,7 @@ namespace WatchList
             //services.AddSingleton<IEventStore, InMemoryEventStore>();
             services.AddSingleton<IEventStore, SqlEventStore>();
             services.AddSingleton<IEventBus, InMemoryEventBus>();
+            services.AddSingleton<IClock, SystemClock>();
             services.AddScoped<CommandInvoker>();
             services.Configure<OmdbApiConfig>(this.Configuration.GetSection("OmdbApi"));
             services.AddHostedService<EventRoutingService>();

@@ -8,6 +8,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 using WatchList.Domain.Events;
+using WatchList.Services;
 
 namespace WatchList.Data.SqlEventStore
 {
@@ -15,12 +16,14 @@ namespace WatchList.Data.SqlEventStore
     {
         private readonly DbContextOptions<SqlEventStoreDbContext> _options;
         private readonly DtoConverter _dtoConverter;
+        private readonly IClock _clock;
 
-        public SqlEventStore(DbContextOptions<SqlEventStoreDbContext> options)
+        public SqlEventStore(DbContextOptions<SqlEventStoreDbContext> options, IClock clock)
         {
             this._options = options;
-            UpgradeDatabase();
             this._dtoConverter = new DtoConverter();
+            this._clock = clock;
+            UpgradeDatabase();
         }
 
         private void UpgradeDatabase()
@@ -38,7 +41,7 @@ namespace WatchList.Data.SqlEventStore
                 foreach (Event evt in evts)
                 {
                     EventDto dto = _dtoConverter.ToDto(evt);
-                    dto.TimeStamp = DateTimeOffset.Now;
+                    dto.TimeStamp = _clock.Now();
                     db.Events.Add(dto);
                 }
                 await db.SaveChangesAsync();
