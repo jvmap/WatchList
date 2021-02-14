@@ -75,7 +75,7 @@ namespace WatchList.Data
         {
             string name = evt.GetType().Name;
             if (!name.EndsWith("Event"))
-                throw new ArgumentException("Event classnames must end with \"Event\" Got: " + evt.GetType().Name);
+                throw new ArgumentException("Event classnames must end with \"Event\". Got: " + evt.GetType().Name);
             name = name[0..^5];
             return name;
         }
