@@ -38,7 +38,7 @@ namespace WatchList.Data
                     {
                         AggregateId = evt.AggregateId,
                         Name = GetEventName(evt),
-                        EventData = SerializeEventData(GetEventData(evt)),
+                        EventData = SerializeEventData(evt),
                         TimeStamp = DateTimeOffset.Now
                     });
                 }
@@ -80,14 +80,14 @@ namespace WatchList.Data
             return name;
         }
 
-        private static IEnumerable<(string, string)> GetEventData(Event evt)
+        private static string SerializeEventData(Event evt)
         {
-            return evt
+            var dict = evt
                 .GetType()
                 .GetProperties()
                 .Where(p => p.DeclaringType != typeof(Event))
-                .Select(p => (ToCamelCase(p.Name), Convert.ToString(p.GetValue(evt), CultureInfo.InvariantCulture)))
-                .ToList();
+                .ToDictionary(p => ToCamelCase(p.Name), p => p.GetValue(evt));
+            return JsonConvert.SerializeObject(dict);
         }
 
         private static string ToCamelCase(string name)
@@ -111,53 +111,13 @@ namespace WatchList.Data
             eventType
                 .GetProperty(nameof(evt.Timestamp))
                 .SetValue(evt, evtDto.TimeStamp);
-            foreach ((string key, string value) in DeserializeEventData(evtDto.EventData))
-            {
-                PropertyInfo property = eventType.GetProperty(ToTitleCase(key));
-                property.SetValue(evt, ConvertToType(value, property.PropertyType));
-            }
+            PopulateEventData(evtDto.EventData, evt);
             return evt;
         }
 
-        private static readonly Dictionary<Type, Func<string, object>> _converters = new Dictionary<Type, Func<string, object>>();
-        
-        static SqlEventStore()
+        private static void PopulateEventData(string eventData, Event evt)
         {
-            RegisterConverter(str => int.Parse(str, CultureInfo.InvariantCulture));
-        }
-
-        private static void RegisterConverter<T>(Func<string, T> converter)
-        {
-            _converters.Add(typeof(T), value => converter(value));
-        }
-
-        private static object ConvertToType(string value, Type type)
-        {
-            return _converters[type](value);
-        }
-
-        private static string ToTitleCase(string key)
-        {
-            if (string.IsNullOrEmpty(key))
-                return key;
-            else
-                return Char.ToUpper(key[0]) + key.Substring(1);
-        }
-
-        private static string SerializeEventData(IEnumerable<(string, string)> eventData)
-        {
-            var dict = new Dictionary<string, string>(eventData
-                .Select(kv => new KeyValuePair<string, string>(kv.Item1, kv.Item2)));
-
-            string result = JsonConvert.SerializeObject(dict);
-            return result;
-        }
-
-        private static IEnumerable<(string, string)> DeserializeEventData(string eventData)
-        {
-            return JsonConvert.DeserializeObject<Dictionary<string, string>>(eventData)
-                        .Select(kvp => (kvp.Key, kvp.Value))
-                        .ToList();
+            JsonConvert.PopulateObject(eventData, evt);
         }
     }
 }
