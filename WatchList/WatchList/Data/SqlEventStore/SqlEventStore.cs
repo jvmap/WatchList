@@ -9,7 +9,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using WatchList.Domain.Events;
 
-namespace WatchList.Data
+namespace WatchList.Data.SqlEventStore
 {
     public class SqlEventStore : IEventStore
     {

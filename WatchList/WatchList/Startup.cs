@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using WatchList.Commands;
 using WatchList.Config;
 using WatchList.Data;
+using WatchList.Data.SqlEventStore;
 using WatchList.Events;
 using WatchList.Services;
 
