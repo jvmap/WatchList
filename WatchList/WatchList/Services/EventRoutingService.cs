@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using WatchList.Data;
 using WatchList.Domain.Events;
+using WatchList.DynamicDispatch;
 using WatchList.Events;
 
 namespace WatchList.Services
@@ -20,10 +21,11 @@ namespace WatchList.Services
         public EventRoutingService(
             IEventBus bus, 
             IUserMovieRepository repo,
-            IEventStore eventStore)
+            IEventStore eventStore,
+            DynamicDispatcher dispatcher)
         {
             this._bus = bus;
-            this._repo = new EventDispatcher(repo);
+            this._repo = new EventDispatcher(repo, dispatcher);
             this._eventStore = eventStore;
         }
         

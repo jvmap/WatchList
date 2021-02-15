@@ -13,6 +13,7 @@ using WatchList.Commands;
 using WatchList.Config;
 using WatchList.Data;
 using WatchList.Data.SqlEventStore;
+using WatchList.DynamicDispatch;
 using WatchList.Events;
 using WatchList.Services;
 
@@ -39,6 +40,7 @@ namespace WatchList
             services.AddSingleton<IEventBus, InMemoryEventBus>();
             services.AddSingleton<IClock, SystemClock>();
             services.AddScoped<CommandInvoker>();
+            services.AddSingleton<DynamicDispatcher>();
             services.Configure<OmdbApiConfig>(this.Configuration.GetSection("OmdbApi"));
             services.AddHostedService<EventRoutingService>();
             services.AddDbContext<SqlEventStoreDbContext>(options =>

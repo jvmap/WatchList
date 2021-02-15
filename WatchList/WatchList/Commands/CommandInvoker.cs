@@ -6,6 +6,7 @@ using WatchList.Data;
 using WatchList.Domain.Commands;
 using WatchList.Domain.Entities;
 using WatchList.Domain.Events;
+using WatchList.DynamicDispatch;
 using WatchList.Events;
 
 namespace WatchList.Commands
@@ -14,19 +15,21 @@ namespace WatchList.Commands
     {
         private readonly IEventStore _eventStore;
         private readonly IEventBus _eventBus;
+        private readonly DynamicDispatcher _dispatcher;
 
-        public CommandInvoker(IEventStore eventStore, IEventBus eventBus)
+        public CommandInvoker(IEventStore eventStore, IEventBus eventBus, DynamicDispatcher dispatcher)
         {
             this._eventStore = eventStore;
             this._eventBus = eventBus;
+            this._dispatcher = dispatcher;
         }
         
         public async Task InvokeAsync<TEntity>(Command<TEntity> cmd)
             where TEntity : Entity, new()
         {
             TEntity entity = await ReviveAsync<TEntity>(cmd.AggregateId);
-            var dispatcher = new CommandDispatcher<TEntity>(entity);
-            IEnumerable<Event> newEvents = dispatcher
+            var commandDispatcher = new CommandDispatcher<TEntity>(entity, _dispatcher);
+            IEnumerable<Event> newEvents = commandDispatcher
                 .Handle(cmd)
                 .ToList();
             await _eventStore.AddEventsAsync(newEvents);
@@ -40,10 +43,10 @@ namespace WatchList.Commands
             where TEntity : Entity, new()
         {
             var entity = new TEntity() { AggregateId = aggregateId };
-            var dispatcher = new EventDispatcher(entity);
+            var eventDispatcher = new EventDispatcher(entity, _dispatcher);
             foreach (Event evt in await _eventStore.GetEventsAsync(aggregateId))
             {
-                dispatcher.OnNext(evt);
+                eventDispatcher.OnNext(evt);
             }
             return entity;
         }
