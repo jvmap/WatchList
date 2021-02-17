@@ -11,6 +11,16 @@ namespace WatchList.Domain.Entities
     {
         private int _timesWatched;
 
+        public void OnNext(RatedMovieEvent evt)
+        {
+
+        }
+
+        public void OnNext(WantToWatchMovieEvent evt)
+        {
+
+        }
+
         public void OnNext(WatchedMovieEvent evt)
         {
             _timesWatched++;

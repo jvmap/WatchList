@@ -21,7 +21,7 @@ namespace WatchList.Events
 
         public void OnNext(Event evt)
         {
-            _dispatcher.DispatchOptional(_target, nameof(OnNext), evt);
+            _dispatcher.Dispatch(_target, nameof(OnNext), evt);
         }
 
         public Task OnNextAsync(Event evt)
