@@ -8,6 +8,6 @@ namespace WatchList.Events
 {
     public interface IEventConsumer
     {
-        Task OnNextAsync(Event evt);
+        Task ProcessBatchAsync(IReadOnlyCollection<(long index, Event)> batch);
     }
 }

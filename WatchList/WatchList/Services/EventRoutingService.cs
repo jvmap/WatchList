@@ -14,38 +14,44 @@ namespace WatchList.Services
 {
     public class EventRoutingService : IHostedService
     {
-        private readonly IEventBus _bus;
         private readonly IEventConsumer _repo;
         private readonly IEventStore _eventStore;
 
         public EventRoutingService(
-            IEventBus bus, 
+            IEventStore eventStore, 
             IUserMovieRepository repo,
-            IEventStore eventStore,
             DynamicDispatcher dispatcher)
         {
-            this._bus = bus;
-            this._repo = new EventDispatcher(repo, dispatcher);
             this._eventStore = eventStore;
+            this._repo = new _EventDispatcherWrapper(new EventDispatcher(repo, dispatcher));
         }
         
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            await WarmUpAsync();
-            await _bus.SubscribeAsync(_repo);
-        }
-
-        private async Task WarmUpAsync()
-        {
-            foreach (Event evt in await _eventStore.GetEventsAsync())
-            {
-                await _repo.OnNextAsync(evt);
-            }
+            await _eventStore.SubscribeAsync(_repo);
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
+        }
+
+        class _EventDispatcherWrapper : IEventConsumer
+        {
+            private EventDispatcher _eventDispatcher;
+
+            public _EventDispatcherWrapper(EventDispatcher eventDispatcher)
+            {
+                this._eventDispatcher = eventDispatcher;
+            }
+
+            public async Task ProcessBatchAsync(IReadOnlyCollection<(long index, Event)> batch)
+            {
+                foreach ((long index, Event evt) in batch)
+                {
+                    await _eventDispatcher.OnNextAsync(evt);
+                }
+            }
         }
     }
 }

@@ -9,7 +9,5 @@ namespace WatchList.Domain.Events
     public abstract class Event
     {
         public string AggregateId { get; init; }
-
-        public DateTimeOffset Timestamp { get; init; }
     }
 }

@@ -9,18 +9,19 @@ namespace WatchList.Data.SqlEventStore
 {
     public class DtoConverter
     {
-        public EventDto ToDto(Event evt)
+        public EventDto ToDto(EventEnvelope evt)
         {
             return new EventDto
             {
                 AggregateId = evt.AggregateId,
-                Name = GetEventName(evt),
-                EventData = SerializeEventData(evt),
+                Version = evt.Version,
+                Name = GetEventName(evt.Event),
+                EventData = SerializeEventData(evt.Event),
                 TimeStamp = evt.Timestamp
             };
         }
 
-        public Event FromDto(EventDto evtDto)
+        public EventEnvelope FromDto(EventDto evtDto)
         {
             string typeName = "WatchList.Domain.Events." + evtDto.Name + "Event,WatchList.Domain";
             Type eventType = Type.GetType(typeName, throwOnError: true);
@@ -28,11 +29,14 @@ namespace WatchList.Data.SqlEventStore
             eventType
                 .GetProperty(nameof(evt.AggregateId))
                 .SetValue(evt, evtDto.AggregateId);
-            eventType
-                .GetProperty(nameof(evt.Timestamp))
-                .SetValue(evt, evtDto.TimeStamp);
             PopulateEventData(evtDto.EventData, evt);
-            return evt;
+            return new EventEnvelope
+            {
+                Event = evt,
+                Index = evtDto.Id,
+                Timestamp = evtDto.TimeStamp,
+                Version = evtDto.Version
+            };
         }
 
         private static string GetEventName(Event evt)

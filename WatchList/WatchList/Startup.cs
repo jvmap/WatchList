@@ -32,18 +32,16 @@ namespace WatchList
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
-            //services.AddScoped<IMovieRepository, InMemoryMovieRepository>();
             services.AddScoped<IMovieRepository, OmdbMovieRepository>();
             services.AddSingleton<IUserMovieRepository, InMemoryUserMovieRepository>();
-            //services.AddSingleton<IEventStore, InMemoryEventStore>();
-            services.AddSingleton<IEventStore, SqlEventStore>();
-            services.AddSingleton<IEventBus, InMemoryEventBus>();
+            services.AddSingleton<IEventPersistence, SqlEventPersistence>();
+            services.AddSingleton<IEventStore, InMemoryEventStore>();
             services.AddSingleton<IClock, SystemClock>();
             services.AddScoped<CommandInvoker>();
             services.AddSingleton<DynamicDispatcher>();
             services.Configure<OmdbApiConfig>(this.Configuration.GetSection("OmdbApi"));
             services.AddHostedService<EventRoutingService>();
-            services.AddDbContext<SqlEventStoreDbContext>(options =>
+            services.AddDbContext<SqlEventPersistenceDbContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("EventStore")), ServiceLifetime.Singleton);
         }
 

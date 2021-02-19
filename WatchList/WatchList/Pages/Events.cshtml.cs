@@ -10,23 +10,33 @@ namespace WatchList.Pages
 {
     public class EventsModel : PageModel
     {
-        private readonly IEventStore _eventStore;
+        private readonly IEventPersistence _persistence;
 
-        public IEnumerable<Event> Events { get; set; }
+        public IEnumerable<EventEnvelope> Events { get; set; }
 
-        public EventsModel(IEventStore eventStore)
+        public EventsModel(IEventPersistence persistence)
         {
-            this._eventStore = eventStore;
+            this._persistence = persistence;
         }
         
         public async Task OnGetAsync()
         {
-            Events = (await _eventStore.GetEventsAsync())
-                .Reverse()
-                .ToList();
+            var events = new Stack<EventEnvelope>();
+            await _persistence.GetEventsAsync(newEvents =>
+            {
+                foreach (EventEnvelope newEvent in newEvents)
+                    events.Push(newEvent);
+                return Task.CompletedTask;
+            });
+            Events = events;
         }
 
-        public string GetEventName(Event evt)
+        public string GetEventName(EventEnvelope envelope)
+        {
+            return GetEventName(envelope.Event);
+        }
+
+        private string GetEventName(Event evt)
         {
             string name = evt.GetType().Name;
             if (name.EndsWith("Event"))
@@ -34,7 +44,12 @@ namespace WatchList.Pages
             return name;
         }
 
-        public IEnumerable<(string, string)> GetEventData(Event evt)
+        public IEnumerable<(string, string)> GetEventData(EventEnvelope envelope)
+        {
+            return GetEventData(envelope.Event);
+        }
+
+        private IEnumerable<(string, string)> GetEventData(Event evt)
         {
             return evt
                 .GetType()

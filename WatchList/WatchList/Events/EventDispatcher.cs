@@ -8,7 +8,7 @@ using WatchList.DynamicDispatch;
 
 namespace WatchList.Events
 {
-    public class EventDispatcher : IEventConsumer
+    public class EventDispatcher
     {
         private readonly object _target;
         private readonly DynamicDispatcher _dispatcher;

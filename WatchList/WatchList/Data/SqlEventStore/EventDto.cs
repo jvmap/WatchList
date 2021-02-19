@@ -10,6 +10,8 @@ namespace WatchList.Data.SqlEventStore
 
         public string AggregateId { get; set; }
 
+        public int Version { get; set; }
+
         public string Name { get; set; }
 
         public string EventData { get; set; }

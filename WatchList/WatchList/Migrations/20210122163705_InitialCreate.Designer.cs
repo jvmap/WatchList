@@ -8,7 +8,7 @@ using WatchList.Data.SqlEventStore;
 
 namespace WatchList.Migrations
 {
-    [DbContext(typeof(SqlEventStoreDbContext))]
+    [DbContext(typeof(SqlEventPersistenceDbContext))]
     [Migration("20210122163705_InitialCreate")]
     partial class InitialCreate
     {

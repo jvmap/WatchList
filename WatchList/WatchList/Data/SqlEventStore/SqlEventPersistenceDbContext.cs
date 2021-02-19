@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace WatchList.Data.SqlEventStore
 {
-    public class SqlEventStoreDbContext : Microsoft.EntityFrameworkCore.DbContext
+    public class SqlEventPersistenceDbContext : Microsoft.EntityFrameworkCore.DbContext
     {
-        public SqlEventStoreDbContext(DbContextOptions<SqlEventStoreDbContext> options)
+        public SqlEventPersistenceDbContext(DbContextOptions<SqlEventPersistenceDbContext> options)
             : base(options)
         {
 
